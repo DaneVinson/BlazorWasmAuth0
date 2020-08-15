@@ -1,0 +1,55 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Net.Http.Headers
+
+@page "/characters"
+
+@inject HttpClient _httpClient
+@inject IAccessTokenProvider _tokenProvider
+
+<h3>Characters</h3>
+@if (Characters.Any())
+{
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Race</th>
+        </tr>
+        @foreach (var character in Characters)
+        {
+            <tr>
+                <td>@character.Name</td>
+                <td>@character.Race</td>
+            </tr>
+        }
+    </table>
+}
+
+@code {
+    private Character[] Characters { get; set; } = Array.Empty<Character>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        //using (var requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost:44358/api/characters"))
+        //{
+        //    var tokenResult = await _tokenProvider.RequestAccessToken();
+
+        //    if (tokenResult.TryGetToken(out var token))
+        //    {
+        //        requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+        //        var response = await _httpClient.SendAsync(requestMessage);
+        //        Characters = await response.Content.ReadFromJsonAsync<Character[]>();
+        //    }
+        //}
+
+        try
+        {
+            Characters = await _httpClient.GetResultAsync<Character[]>("api/characters");
+            if (Characters == null) { Characters = Array.Empty<Character>(); }
+        }
+        catch (AccessTokenNotAvailableException)
+        {
+            // Handle the missing access token, i.e. not authenticated
+            Console.WriteLine("Request is missing an access token!");
+        }
+    }
+}

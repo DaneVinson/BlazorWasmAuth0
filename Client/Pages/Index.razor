@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Text.Json
+
+@page "/"
+@page "/{Customer}"
+
+<p>Current Customer: <strong>@Utility.ClientOptions?.Name</strong></p>
+
+<AuthorizeView>
+    <Authorized>
+        @foreach (var claim in context.User.Claims)
+        {
+            @string.Format("{0}: {1}", claim.Type, claim.Value); <br />
+        }
+    </Authorized>
+</AuthorizeView>
+
+@code
+{
+    [Parameter]
+    public string Customer { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrWhiteSpace(Customer))
+        {
+            Utility.ClientOptions = new ClientOptions()
+            {
+                Authority = string.Empty,
+                ClientId = string.Empty,
+                Name = Customer
+            };
+        }
+    }
+}
