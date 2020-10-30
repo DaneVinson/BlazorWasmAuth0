@@ -46,6 +46,10 @@ namespace WebApi.Controllers
             {
                 return new int[] { 666 };
             }
+            else if ("portland".Equals(options.Customer, StringComparison.OrdinalIgnoreCase) && "Dane Vinson".Equals(options.Name, StringComparison.OrdinalIgnoreCase))
+            {
+                return new int[] { 23, 24 };
+            }
             else { return Array.Empty<int>(); }
         }
     }
